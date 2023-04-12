@@ -1,4 +1,4 @@
-package utils
+package lib
 
 import (
 	"io"
@@ -9,10 +9,8 @@ import (
 	"golang.org/x/net/html"
 )
 
-// todo, tambah cacher, tambah rate limiter juga
-type URLFetcher struct{}
-
-func (f *URLFetcher) Fetch(url string) ([]string, error) {
+// Fetch for the urls contained in a webpage of a given url
+func Fetch(url string) ([]string, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -24,12 +22,20 @@ func (f *URLFetcher) Fetch(url string) ([]string, error) {
 		return nil, err
 	}
 
-	return getUrlsFromHTMLPage(string(content)), nil
+	urls, err := getUrlsFromHTMLPage(string(content))
+	if err != nil {
+		return nil, err
+	}
+	return urls, nil
 }
 
-func getUrlsFromHTMLPage(htmlString string) []string {
-	// Get all the anchor tags and returns the urls contained in the "href"s
-	doc, _ := html.Parse(strings.NewReader(htmlString))
+func getUrlsFromHTMLPage(htmlString string) ([]string, error) {
+	// Get all the anchor tags and return the urls contained in the "href"s
+	doc, err := html.Parse(strings.NewReader(htmlString))
+
+	if err != nil {
+		return nil, err
+	}
 
 	urls := make([]string, 0)
 
@@ -53,5 +59,5 @@ func getUrlsFromHTMLPage(htmlString string) []string {
 
 	f(doc)
 
-	return urls
+	return urls, nil
 }
