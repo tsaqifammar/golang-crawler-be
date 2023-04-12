@@ -3,18 +3,20 @@ package lib
 import (
 	"fmt"
 	"log"
+	"sync"
 	"time"
 )
 
 type Crawler struct {
 	cache         *URLCacher
+	wg            sync.WaitGroup
 	ticker        <-chan time.Time
 	rootUrl       string
 	depth, maxUrl int
 	hasCrawled    bool
 }
 
-func NewCrawler(url string, depth int, maxUrl int) Crawler {
+func NewCrawler(url string, depth int, maxUrl int) *Crawler {
 	ticker := time.NewTicker(500 * time.Millisecond)
 	c := Crawler{
 		rootUrl:    url,
@@ -23,7 +25,7 @@ func NewCrawler(url string, depth int, maxUrl int) Crawler {
 		hasCrawled: false,
 		ticker:     ticker.C,
 	}
-	return c
+	return &c
 }
 
 // To crawl for urls starting from a root url.
@@ -34,16 +36,20 @@ func (c *Crawler) Crawl() {
 		return
 	}
 	c.cache = NewURLCacher()
+	c.wg.Add(1)
 	c.getUrls(c.rootUrl, 0)
+	c.wg.Wait()
 }
 
 func (c *Crawler) getUrls(url string, depth int) {
-	<-c.ticker
-	log.Printf("Getting url for %v...", url)
-	if depth == c.depth {
+	defer c.wg.Done()
+	if depth == c.depth || c.cache.GetUrlCount() >= c.maxUrl {
 		return
 	}
 
+	<-c.ticker
+
+	log.Printf("Getting url for %v...", url)
 	urls, err := Fetch(url)
 
 	if err != nil {
@@ -52,6 +58,7 @@ func (c *Crawler) getUrls(url string, depth int) {
 
 	for _, u := range urls {
 		if !c.cache.HasVisited(u) && c.cache.GetUrlCount() < c.maxUrl {
+			c.wg.Add(1)
 			c.cache.MarkVisited(u, depth+1, url)
 			go c.getUrls(u, depth+1)
 		}
@@ -78,7 +85,7 @@ func (c *Crawler) GetResults() {
 
 		for _, c := range adj[cur] {
 			if c == cur {
-				log.Fatal("tf")
+				log.Fatal("Something went wrong")
 			}
 			dfs(c, depth+1)
 		}
