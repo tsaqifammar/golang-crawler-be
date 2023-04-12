@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/tsaqifammar/url-crawler/lib"
 )
@@ -9,9 +9,8 @@ import (
 // define crawler
 
 func main() {
-	fmt.Println("running")
-	x, _ := lib.Fetch("https://google.com")
-	for idx, url := range x {
-		fmt.Println(idx, url)
-	}
+	c := lib.NewCrawler("https://google.com", 3, 100)
+	c.Crawl()
+	time.Sleep(5 * time.Second)
+	c.GetResults()
 }
