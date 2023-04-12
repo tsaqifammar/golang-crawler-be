@@ -39,6 +39,7 @@ func (c *Crawler) Crawl() {
 
 func (c *Crawler) getUrls(url string, depth int) {
 	<-c.ticker
+	log.Printf("Getting url for %v...", url)
 	if depth == c.depth {
 		return
 	}
