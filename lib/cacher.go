@@ -2,7 +2,7 @@ package lib
 
 import "sync"
 
-type UrlInfo struct {
+type UrlCacheInfo struct {
 	Depth     int
 	ParentUrl string
 }
@@ -10,13 +10,13 @@ type UrlInfo struct {
 type URLCacher struct {
 	mu sync.Mutex
 
-	Info     map[string]UrlInfo
+	Info     map[string]UrlCacheInfo
 	UrlCount int
 }
 
 func NewURLCacher() *URLCacher {
 	uc := URLCacher{
-		Info:     make(map[string]UrlInfo),
+		Info:     make(map[string]UrlCacheInfo),
 		UrlCount: 0,
 	}
 	return &uc
@@ -24,7 +24,7 @@ func NewURLCacher() *URLCacher {
 
 func (c *URLCacher) MarkVisited(url string, depth int, parentUrl string) {
 	c.mu.Lock()
-	c.Info[url] = UrlInfo{
+	c.Info[url] = UrlCacheInfo{
 		Depth:     depth,
 		ParentUrl: parentUrl,
 	}

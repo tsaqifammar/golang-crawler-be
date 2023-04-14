@@ -3,7 +3,6 @@ package lib
 import (
 	"io"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -43,11 +42,8 @@ func getUrlsFromHTMLPage(htmlString string) ([]string, error) {
 	f = func(node *html.Node) {
 		if node.Type == html.ElementNode && node.Data == "a" {
 			for _, a := range node.Attr {
-				if a.Key == "href" {
-					u, err := url.ParseRequestURI(a.Val)
-					if err == nil && u.Scheme != "" && u.Host != "" {
-						urls = append(urls, a.Val)
-					}
+				if a.Key == "href" && IsUrl(a.Val) {
+					urls = append(urls, a.Val)
 				}
 			}
 		}

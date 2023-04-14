@@ -65,8 +65,13 @@ func (c *Crawler) getUrls(url string, depth int) {
 	}
 }
 
+type UrlInfo struct {
+	Url       string    `json:"url"`
+	ChildUrls []UrlInfo `json:"childUrls"`
+}
+
 // To get the the resulting urls after running Crawl.
-func (c *Crawler) GetResults() {
+func (c *Crawler) GetResults() UrlInfo {
 	// Generate a tree based on information that is saved in cache
 	res := c.cache.Info
 	fmt.Println(len(res))
@@ -76,20 +81,22 @@ func (c *Crawler) GetResults() {
 		adj[info.ParentUrl] = append(adj[info.ParentUrl], url)
 	}
 
-	var dfs func(cur string, depth int)
-	dfs = func(cur string, depth int) {
-		for i := 0; i < depth; i++ {
-			fmt.Print("|")
-		}
-		fmt.Println(cur)
+	var dfs func(cur string, depth int) UrlInfo
+	dfs = func(cur string, depth int) UrlInfo {
+		var childUrls = make([]UrlInfo, 0)
 
 		for _, c := range adj[cur] {
 			if c == cur {
 				log.Fatal("Something went wrong")
 			}
-			dfs(c, depth+1)
+			childUrls = append(childUrls, dfs(c, depth+1))
+		}
+
+		return UrlInfo{
+			Url:       cur,
+			ChildUrls: childUrls,
 		}
 	}
 
-	dfs(c.rootUrl, 0)
+	return dfs(c.rootUrl, 0)
 }
