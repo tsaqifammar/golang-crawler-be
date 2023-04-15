@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/tsaqifammar/url-crawler/lib"
@@ -13,11 +15,19 @@ func main() {
 	http.HandleFunc("/crawl", crawlHandler)
 
 	fmt.Println("Starting web server at http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", nil)
+	if errors.Is(err, http.ErrServerClosed) {
+		fmt.Println("Server closed")
+	} else if err != nil {
+		fmt.Println("Error starting the server", err)
+		os.Exit(1)
+	}
 }
 
 func crawlHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 	if r.Method == "GET" {
 		url := r.FormValue("url")

@@ -17,7 +17,7 @@ type Crawler struct {
 }
 
 func NewCrawler(url string, depth int, maxUrl int) *Crawler {
-	ticker := time.NewTicker(500 * time.Millisecond)
+	ticker := time.NewTicker(300 * time.Millisecond)
 	c := Crawler{
 		rootUrl:    url,
 		depth:      depth - 1,
