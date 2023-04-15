@@ -8,7 +8,7 @@ The crawler includes rate-limiting and basic caching capabilities, and uses a si
 
 Some important links:
 
-* View the app: [crawler-fe.vercel.app](crawler-fe.vercel.app)
+* View the app: [crawler-fe.vercel.app](https://crawler-fe.vercel.app/)
 * Front-end source code: [https://github.com/tsaqifammar/crawler-fe](https://github.com/tsaqifammar/crawler-fe)
 
 ## View
