@@ -23,7 +23,7 @@ func main() {
 	}
 
 	log.Println("Starting web server at port", port)
-	err := http.ListenAndServe("0.0.0.0:8080", nil)
+	err := http.ListenAndServe("0.0.0.0:"+port, nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		log.Println("Server closed")
 	} else if err != nil {
