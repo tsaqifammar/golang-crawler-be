@@ -3,23 +3,31 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
 
+	"github.com/joho/godotenv"
 	"github.com/tsaqifammar/url-crawler/lib"
 )
 
 func main() {
+	godotenv.Load()
+
 	http.HandleFunc("/crawl", crawlHandler)
 
-	fmt.Println("Starting web server at http://localhost:8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("A port must be set up")
+	}
+
+	log.Println("Starting web server at port", port)
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
-		fmt.Println("Server closed")
+		log.Println("Server closed")
 	} else if err != nil {
-		fmt.Println("Error starting the server", err)
+		log.Println("Error starting the server", err)
 		os.Exit(1)
 	}
 }
