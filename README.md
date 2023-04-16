@@ -14,3 +14,73 @@ Some important links:
 ## View
 
 ![page](https://user-images.githubusercontent.com/54428874/232195481-f32b8fee-8eea-4280-a6f0-331afa8c1529.png)
+
+## End-point
+
+### <code>GET</code> <code><b>/crawl</b></code>
+
+To crawl for URLs, given a root URL, a depth, and a max URL to be crawled.
+
+#### Parameters
+
+| name   | description                              |
+| ------ | ---------------------------------------- |
+| url    | The root url.                            |
+| depth  | The maximum depth to be crawled.         |
+| maxUrl | The maximum number of URLs to be crawled |
+
+#### Example
+
+```js
+GET /crawl?url=https://someurl.com&depth=3&maxUrl=12
+
+Response:
+{
+  "url": "https://someurl.com",
+  "childUrls": [
+    {
+      "url": "https://url11.com",
+      "childUrls": [
+        {
+          "url": "https://url111.com",
+          "childUrls": [],
+        },
+        {
+          "url": "https://url112.com",
+          "childUrls": [],
+        },
+      ],
+    },
+    {
+      "url": "https://url12.com",
+      "childUrls": [
+        {
+          "url": "https://url121.com",
+          "childUrls": [],
+        },
+        {
+          "url": "https://url122.com",
+          "childUrls": [],
+        },
+        {
+          "url": "https://url123.com",
+          "childUrls": [],
+        },
+      ],
+    },
+    {
+      "url": "https://url13.com",
+      "childUrls": [],
+    },
+    {
+      "url": "https://url14.com",
+      "childUrls": [
+        {
+          "url": "https://url141.com",
+          "childUrls": [],
+        },
+      ],
+    },
+  ],
+}
+```
